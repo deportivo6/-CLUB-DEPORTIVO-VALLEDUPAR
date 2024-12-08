@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Perfil</title>
+    <link rel="stylesheet" href="perfil.css">
+     <!-- Favicon para navegadores de escritorio -->
+ <link rel="icon" href="favicon.ico" type="image/x-icon" />
+  
+ <!-- Favicon para dispositivos Apple -->
+ <link rel="apple-touch-icon" href="images/escudo2.png">
+ 
+ <!-- Favicon para dispositivos Android -->
+ <link rel="icon" sizes="192x192" href="images/escudo2.png">
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f7fa;
+            margin: 0;
+            padding: 0;
+        }
+
+        .perfil-container {
+            max-width: 600px;
+            margin: 50px auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #2d3748;
+            font-size: 2rem;
+        }
+
+        h2 {
+            color: #4a5568;
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+        }
+
+        p {
+            color: #4a5568;
+            font-size: 1rem;
+            margin-bottom: 10px;
+        }
+
+        .perfil-container button {
+            width: 100%;
+            padding: 10px;
+            background-color: #3182ce;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin-top: 10px;
+            transition: background-color 0.3s ease;
+        }
+
+        .perfil-container button:hover {
+            background-color: #2b6cb0;
+        }
+
+        #adminPanelButton {
+            background-color: #48bb78;
+        }
+
+        #adminPanelButton:hover {
+            background-color: #38a169;
+        }
+
+        #adminPanelButton:focus {
+            outline: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="perfil-container">
+        <h1>Mi Perfil</h1>
+        <div id="perfilUsuario">
+            <h2>Datos de Usuario</h2>
+            <p>Nombre: <span id="nombrePerfil"></span></p>
+            <p>Email: <span id="emailPerfil"></span></p>
+            <p>Rango: <span id="rangoPerfil"></span></p>
+            <button onclick="cerrarSesion()">Cerrar Sesión</button>
+            <button onclick="window.history.back()">Regresar</button>
+            <button id="adminPanelButton" style="display: none;" onclick="irAPanelAdmin()">Ir a Panel de Admin</button>
+        </div>
+    </div>
+   
+
+    <!-- Incluir scripts de Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="script.js"></script>
+    <script>
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                var userRef = database.ref('users/' + user.uid);
+                userRef.once('value').then(function(snapshot) {
+                    var userData = snapshot.val();
+                    
+                    // Mostrar los datos obtenidos
+                    document.getElementById('nombrePerfil').textContent = userData.full_name || 'No disponible';
+                    document.getElementById('emailPerfil').textContent = user.email || 'No disponible';
+                    document.getElementById('rangoPerfil').textContent = userData.role || 'No disponible';
+
+                    // Mostrar el botón solo si el usuario es admin
+                    if (userData.role === 'admin') {
+                        document.getElementById('adminPanelButton').style.display = 'block';
+                    }
+                });
+            } else {
+                // No hay usuario logueado, redirigir a index
+                window.location.href = 'index.html';
+            }
+        });
+
+        function irAPanelAdmin() {
+            window.location.href = 'admin.html'; // Cambiado a admin.html
+        }
+
+        function cerrarSesion() {
+            auth.signOut().then(() => {
+                window.location.href = 'index.html';
+            });
+        }
+    </script>
+    
+</body>
+</html>
